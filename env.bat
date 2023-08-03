@@ -1,0 +1,1 @@
+path %PATH%;D:\Pessoal\Projetos\ffmpeg-6.0-essentials_build\bin
