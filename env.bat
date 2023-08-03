@@ -1,1 +1,1 @@
-path %PATH%;D:\Pessoal\Projetos\ffmpeg-6.0-essentials_build\bin
+path %PATH%;D:\Pessoal\Projetos\ImageMagick-7.0.10-53-portable-Q16-x86
