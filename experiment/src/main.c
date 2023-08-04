@@ -10,7 +10,7 @@ int main(u16 hard)
     // disable interrupt when accessing VDP
     SYS_disableInts();
     // initialization
-    VDP_setScreenWidth320();
+    VDP_setScreenWidth256();
 
     // set all palette to black
     VDP_setPaletteColors(0, (u16*) palette_black, 64);
@@ -25,13 +25,13 @@ int main(u16 hard)
     ind += frame_94.tileset->numTile;
 
     // This one is not packed
-    TileMap *utmap = logo_ucomp.tilemap;
+    //TileMap *utmap = logo_ucomp.tilemap;
     // Unpack the packed tilemap
     TileMap *ctmap = unpackTileMap(logo_aplib.tilemap, NULL);
 
     // draw backgrounds
-    VDP_setTileMapEx(BG_A, ctmap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, idx1), 0, 0,  0, 0, 30, 12, CPU);
-    VDP_setTileMapEx(BG_A, utmap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, idx2), 0, 12, 0, 0, frame_94.tilemap->w, frame_94.tilemap->h, CPU);
+    VDP_setTileMapEx(BG_A, ctmap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, idx1), 0, 0,  0, 0, 30, 12, DMA);
+    VDP_setTileMapEx(BG_A, frame_94.tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, idx2), 0, 12, 0, 0, frame_94.tilemap->w, frame_94.tilemap->h, DMA);
 
     VDP_setPaletteColors(0,  (u16*)logo_aplib.palette->data, 16);
 	VDP_setPaletteColors(16, (u16*)frame_94.palette->data, 32);
