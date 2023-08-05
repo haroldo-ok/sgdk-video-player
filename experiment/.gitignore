@@ -1,2 +1,4 @@
 /out
 /res/*.h
+/res/movie_frames.res
+/src/generated
