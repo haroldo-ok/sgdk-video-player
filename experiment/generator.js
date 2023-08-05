@@ -5,6 +5,8 @@ const MOVIE_DIR = 'tmpmv_test/';
 const GENSRC_DIR = 'src/generated/';
 const RES_DIR = 'res/';
 
+const removeExtension = s => s.replace(/.png$/, '');
+
 const FILE_REGEX = /^\w+_(\d+)\.png$/;
 const fileNames = fs.readdirSync(MOVIE_DIR).filter(s => FILE_REGEX.test(s));
 const sortedFileNames = fileNames
@@ -27,24 +29,29 @@ fs.writeFileSync(`${GENSRC_DIR}/movie_res.h`, `
 #include <genesis.h>
 
 typedef struct MovieData {
-	u16 frameCount,
-	Image *frames[];
+	u16 frameCount;
+	const Image *frames[];
 } MovieData;
 
 extern const MovieData movie_test;
 
-#endif _MOVIE_RES_H
+#endif // _MOVIE_RES_H
 `);
 
 fs.writeFileSync(`${GENSRC_DIR}/movie_res.c`, `
 #include "movie_res.h"
+#include "movie_frames.h"
 
 const MovieData movie_test = {
 	${sortedFileNames.length},
-${sortedFileNames.map(s => `	&movie_test_${s.replace(/.png$/, '')}`).join(',\n')}
+
+	{
+${sortedFileNames.map(s => `		&movie_test_${removeExtension(s)}`).join(',\n')}
+	}
+
 };
 
 `);
 
 fs.writeFileSync(`${RES_DIR}/movie_frames.res`, sortedFileNames
-	.map(s => `IMAGE movie_test_${s} "../${MOVIE_DIR}/${s}" FAST`).join('\n') + '\n');
+	.map(s => `IMAGE movie_test_${removeExtension(s)} "../${MOVIE_DIR}/${s}" FAST`).join('\n') + '\n');
