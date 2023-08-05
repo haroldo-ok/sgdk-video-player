@@ -3,6 +3,7 @@ const fs = require('fs');
 //parseInt(/^\w+_(\d+)\.png$/.exec('frame_142.png')[1])
 const MOVIE_DIR = 'tmpmv_test/';
 const GENSRC_DIR = 'src/generated/';
+const RES_DIR = 'res/';
 
 const FILE_REGEX = /^\w+_(\d+)\.png$/;
 const fileNames = fs.readdirSync(MOVIE_DIR).filter(s => FILE_REGEX.test(s));
@@ -13,6 +14,10 @@ const sortedFileNames = fileNames
 	
 if (!fs.existsSync(GENSRC_DIR)) {
 	fs.mkdirSync(GENSRC_DIR, { recursive: true });
+}
+
+if (!fs.existsSync(RES_DIR)) {
+	fs.mkdirSync(RES_DIR, { recursive: true });
 }
 
 fs.writeFileSync(`${GENSRC_DIR}/movie_res.h`, `
@@ -40,3 +45,6 @@ ${sortedFileNames.map(s => `	&movie_test_${s.replace(/.png$/, '')}`).join(',\n')
 };
 
 `);
+
+fs.writeFileSync(`${RES_DIR}/movie_frames.res`, sortedFileNames
+	.map(s => `IMAGE movie_test_${s} "../${MOVIE_DIR}/${s}" FAST`).join('\n') + '\n');
