@@ -30,3 +30,13 @@ extern const MovieData movie_test;
 
 #endif _MOVIE_RES_H
 `);
+
+fs.writeFileSync(`${GENSRC_DIR}/movie_res.c`, `
+#include "movie_res.h"
+
+const MovieData movie_test = {
+	${sortedFileNames.length},
+${sortedFileNames.map(s => `	&movie_test_${s.replace(/.png$/, '')}`).join(',\n')}
+};
+
+`);
