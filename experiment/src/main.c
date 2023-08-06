@@ -5,6 +5,39 @@
 
 #include "generated/movie_res.h"
 
+static u8    lineDisplay  = 0;          // line position on display screen
+static fix16 lineGraphics = 0;          // line position in graphics texture
+static fix16 scroll       = 0;          // scrolling offset
+static fix16 scale        = FIX16(0.5); // scaling factor
+
+void HIntHandler() {
+    // Set line to display
+    VDP_setVerticalScroll(BG_A, fix16ToInt(lineGraphics) - lineDisplay);
+
+    // Determine next graphics line to display (+1 means image is unscaled)
+    lineGraphics += scale;
+
+    // Count raster lines
+    lineDisplay++;
+
+    // Decrease scaling factor each line
+//    scale -= max(scale >> 6, FIX16(0.02));
+}
+
+void VIntHandler() {
+	// Make sure HInt always starts with line 0
+	lineDisplay = 0;
+
+	// Reset first line we want to display
+	lineGraphics = scroll;
+
+	// Decrease scrolling offset, reset after 64 lines
+//	scroll = (scroll - FIX16(1)) % FIX16(64);
+
+	// Reset scaling factor
+//	scale = FIX16(6.0);
+}
+
 int main(u16 hard)
 {
     // disable interrupt when accessing VDP
@@ -16,6 +49,17 @@ int main(u16 hard)
     VDP_setPaletteColors(0, (u16*) palette_black, 64);
 
     // VDP process done, we can re enable interrupts
+    SYS_enableInts();
+
+    // Setup interrupt handlers
+    SYS_disableInts();
+    VDP_setScrollingMode(HSCROLL_PLANE, VSCROLL_PLANE);
+    {
+        VDP_setHIntCounter(0);
+        VDP_setHInterrupt(1);
+        SYS_setHIntCallback(HIntHandler);
+        SYS_setVIntCallback(VIntHandler);
+    }
     SYS_enableInts();
 	
 	bool activeBuffer = FALSE;
@@ -35,8 +79,11 @@ int main(u16 hard)
 			
 			VDP_waitVInt();
 			
+			SYS_disableInts();
 			VDP_setPaletteColors(palIdx, (u16*)frame->palette->data, palIdx + 16);
-			VDP_setTileMapEx(BG_A, ctmap, TILE_ATTR_FULL(palNum, FALSE, FALSE, FALSE, idx), 0, 0, 0, 0, frame->tilemap->w, frame->tilemap->h, DMA);
+			VDP_setTileMapEx(BG_A, ctmap, TILE_ATTR_FULL(palNum, FALSE, FALSE, FALSE, idx), 0, 0, 0, 0, frame->tilemap->w, frame->tilemap->h, DMA);			
+			SYS_enableInts();
+
 			MEM_free(ctmap);
 			
 			activeBuffer = !activeBuffer;
