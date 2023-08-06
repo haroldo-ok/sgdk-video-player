@@ -54,4 +54,4 @@ ${sortedFileNames.map(s => `		&movie_test_${removeExtension(s)}`).join(',\n')}
 `);
 
 fs.writeFileSync(`${RES_DIR}/movie_frames.res`, sortedFileNames
-	.map(s => `IMAGE movie_test_${removeExtension(s)} "../${MOVIE_DIR}/${s}" NONE`).join('\n') + '\n');
+	.map(s => `IMAGE movie_test_${removeExtension(s)} "../${MOVIE_DIR}/${s}" FAST`).join('\n') + '\n');
