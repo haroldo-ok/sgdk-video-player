@@ -30,8 +30,8 @@ int main(u16 hard)
 
 			VDP_waitVInt();
 			VDP_loadTileSet(frame->tileset, idx, DMA);
-			VDP_setTileMapEx(BG_A, frame->tilemap, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, idx), 0, 12, 0, 0, frame->tilemap->w, frame->tilemap->h, DMA);
-			VDP_setPaletteColors(16, (u16*)frame->palette->data, 32);
+			VDP_setTileMapEx(BG_A, frame->tilemap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, idx), 0, 0, 0, 0, frame->tilemap->w, frame->tilemap->h, DMA);
+			VDP_setPaletteColors(0, (u16*)frame->palette->data, 16);
 			
 			activeBuffer = !activeBuffer;
 		}
