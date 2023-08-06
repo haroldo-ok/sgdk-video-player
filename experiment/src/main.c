@@ -10,7 +10,12 @@ static fix16 lineGraphics = 0;          // line position in graphics texture
 static fix16 scroll       = 0;          // scrolling offset
 static fix16 scale        = FIX16(0.5); // scaling factor
 
+static bool shiftLine = FALSE;
+static bool evenFrame = TRUE;
+
 void HIntHandler() {
+    VDP_setHorizontalScroll(BG_A, shiftLine ? 1 : 0);
+
     // Set line to display
     VDP_setVerticalScroll(BG_A, fix16ToInt(lineGraphics) - lineDisplay);
 
@@ -19,6 +24,8 @@ void HIntHandler() {
 
     // Count raster lines
     lineDisplay++;
+	
+	shiftLine = !shiftLine;
 
     // Decrease scaling factor each line
 //    scale -= max(scale >> 6, FIX16(0.02));
@@ -30,6 +37,9 @@ void VIntHandler() {
 
 	// Reset first line we want to display
 	lineGraphics = scroll;
+	
+	evenFrame = !evenFrame;
+	shiftLine = evenFrame;
 
 	// Decrease scrolling offset, reset after 64 lines
 //	scroll = (scroll - FIX16(1)) % FIX16(64);
@@ -94,6 +104,3 @@ int main(u16 hard)
 
     return 0;
 }
-
-
-
