@@ -27,11 +27,17 @@ int main(u16 hard)
 		for (u16 frameNumber = 0; frameNumber != movie_test.frameCount; frameNumber++) {
 			const Image *frame = movie_test.frames[frameNumber];
 			u16 idx = activeBuffer ? idx1 : idx2;
+			u16 palNum = activeBuffer ? PAL0 : PAL1;
+			u16 palIdx = activeBuffer ? 0 : 16;
 
-			VDP_waitVInt();
 			VDP_loadTileSet(frame->tileset, idx, DMA);
-			VDP_setTileMapEx(BG_A, frame->tilemap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, idx), 0, 0, 0, 0, frame->tilemap->w, frame->tilemap->h, DMA);
-			VDP_setPaletteColors(0, (u16*)frame->palette->data, 16);
+			TileMap *ctmap = unpackTileMap(frame->tilemap, NULL);
+			
+			VDP_waitVInt();
+			
+			VDP_setPaletteColors(palIdx, (u16*)frame->palette->data, palIdx + 16);
+			VDP_setTileMapEx(BG_A, ctmap, TILE_ATTR_FULL(palNum, FALSE, FALSE, FALSE, idx), 0, 0, 0, 0, frame->tilemap->w, frame->tilemap->h, DMA);
+			MEM_free(ctmap);
 			
 			activeBuffer = !activeBuffer;
 		}
