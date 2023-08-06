@@ -8,7 +8,7 @@
 static u8    lineDisplay  = 0;          // line position on display screen
 static fix16 lineGraphics = 0;          // line position in graphics texture
 static fix16 scroll       = 0;          // scrolling offset
-static fix16 scale        = FIX16(0.5); // scaling factor
+static fix16 scale        = FIX16(0.25); // scaling factor
 
 void HIntHandler() {
     // Set line to display
@@ -75,16 +75,16 @@ int main(u16 hard)
 			u16 palIdx = activeBuffer ? 0 : 16;
 
 			VDP_loadTileSet(frame->tileset, idx, DMA);
-			TileMap *ctmap = unpackTileMap(frame->tilemap, NULL);
+			//TileMap *ctmap = unpackTileMap(frame->tilemap, NULL);
 			
 			VDP_waitVInt();
 			
-			SYS_disableInts();
+			//SYS_disableInts();
 			VDP_setPaletteColors(palIdx, (u16*)frame->palette->data, palIdx + 16);
-			VDP_setTileMapEx(BG_A, ctmap, TILE_ATTR_FULL(palNum, FALSE, FALSE, FALSE, idx), 0, 0, 0, 0, frame->tilemap->w, frame->tilemap->h, DMA);			
-			SYS_enableInts();
+			VDP_setTileMapEx(BG_A, frame->tilemap, TILE_ATTR_FULL(palNum, FALSE, FALSE, FALSE, idx), 0, 0, 0, 0, frame->tilemap->w, frame->tilemap->h, DMA);			
+			//SYS_enableInts();
 
-			MEM_free(ctmap);
+			//MEM_free(ctmap);
 			
 			activeBuffer = !activeBuffer;
 		}
