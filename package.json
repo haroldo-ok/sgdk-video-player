@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/haroldo-ok/sgdk-video-player/issues"
   },
-  "homepage": "https://github.com/haroldo-ok/sgdk-video-player#readme"
+  "homepage": "https://github.com/haroldo-ok/sgdk-video-player#readme",
+  "dependencies": {
+    "rgbquant-sms": "github:haroldo-ok/RgbQuant-SMS.js"
+  }
 }
