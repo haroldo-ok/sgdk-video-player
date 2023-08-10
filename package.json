@@ -1,6 +1,6 @@
 {
   "name": "sgdk-video-player",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A video converter/video player for SGDK ",
   "main": "index.js",
   "scripts": {
