@@ -1,5 +1,5 @@
 const fs = require('fs');
-const branchy = require('branchy');
+const { Pool } = require('multiprocessing');
 
 //fs.readdirSync('tmpmv_test');
 //parseInt(/^\w+_(\d+)\.png$/.exec('frame_142.png')[1])
@@ -39,14 +39,7 @@ const convertFn = async src => {
 	});
 	console.log(`Finished generating ${dest}.`);
 };
-const executor = branchy((a, b) => 'test', { concurrent: 8 });
 
+const pool = new Pool();
 
-(async () => {
-	/*
-	for (src of sortedFileNames) {
-		convertFn(src);
-	}
-	*/
-	await Promise.all(sortedFileNames.map(convertFn));
-})();
+pool.map(sortedFileNames, convert).then(() => console.log('All done!'));
