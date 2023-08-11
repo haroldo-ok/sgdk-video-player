@@ -1,6 +1,7 @@
 const fs = require('fs');
-const { Pool } = require('multiprocessing');
+const { Worker, isMainThread, parentPort } = require('worker_threads');
 
+const LEADING_ZEROES = 4
 //fs.readdirSync('tmpmv_test');
 //parseInt(/^\w+_(\d+)\.png$/.exec('frame_142.png')[1])
 const MOVIE_DIR = 'tmpmv_test/';
@@ -40,6 +41,14 @@ const convertFn = async src => {
 	console.log(`Finished generating ${dest}.`);
 };
 
-const pool = new Pool();
-
-pool.map(sortedFileNames, convert).then(() => console.log('All done!'));
+if (isMainThread) {
+	console.log('I am the main process');
+	const worker = new Worker(__filename);
+    worker.once('message', (message) => {
+		console.log('message from worker');
+    })
+    worker.on('error', console.error)
+} else {
+	console.log('I am a worker');
+	parentPort.postMessage({});
+}
