@@ -1,7 +1,7 @@
 const fs = require('fs');
-const { Worker, isMainThread, parentPort } = require('worker_threads');
+const path = require('path');
+const { spawn } = require('child_process');
 
-const LEADING_ZEROES = 4
 //fs.readdirSync('tmpmv_test');
 //parseInt(/^\w+_(\d+)\.png$/.exec('frame_142.png')[1])
 const MOVIE_DIR = 'tmpmv_test/';
@@ -41,14 +41,29 @@ const convertFn = async src => {
 	console.log(`Finished generating ${dest}.`);
 };
 
-if (isMainThread) {
-	console.log('I am the main process');
-	const worker = new Worker(__filename);
-    worker.once('message', (message) => {
-		console.log('message from worker');
-    })
-    worker.on('error', console.error)
-} else {
-	console.log('I am a worker');
-	parentPort.postMessage({});
-}
+(async () => {
+	const rgbQuantSmsPath = path.dirname(require.resolve('rgbquant-sms/package.json'));
+	console.log('rgbQuantSmsPath', rgbQuantSmsPath);
+	
+	const src = sortedFileNames[25];
+	const dest = removeExtension(src) + '.png';
+
+	console.log(`Starting to reduce colors on ${src} to ${dest}...`);
+	
+	const process = spawn('node', ['--max-old-space-size=4096', rgbQuantSmsPath,
+		'convert', 
+		MOVIE_DIR + src, 
+		MOVIE_DIR + dest,
+		'--colors', '16',
+		'--maxTiles', '512',
+		'--dithKern', 'Ordered2x1']);
+	process.stdout.on('data', (data) => {
+		console.log(data.toString());
+	});
+	process.stderr.on('data', (data) => {
+		console.error(data.toString());
+	});
+	process.on('exit', (code) => {
+		console.log(`Child exited with code ${code}`);
+	});
+})();
