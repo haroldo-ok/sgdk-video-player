@@ -45,25 +45,33 @@ const convertFn = async src => {
 	const rgbQuantSmsPath = path.dirname(require.resolve('rgbquant-sms/package.json'));
 	console.log('rgbQuantSmsPath', rgbQuantSmsPath);
 	
-	const src = sortedFileNames[25];
-	const dest = removeExtension(src) + '.png';
+	const executeConverter = src => new Promise((resolve, reject) => {
+		const dest = removeExtension(src) + '.png';
 
-	console.log(`Starting to reduce colors on ${src} to ${dest}...`);
+		console.log(`Starting to reduce colors on ${src} to ${dest}...`);
+		
+		const process = spawn('node', ['--max-old-space-size=4096', rgbQuantSmsPath,
+			'convert', 
+			MOVIE_DIR + src, 
+			MOVIE_DIR + dest,
+			'--colors', '16',
+			'--maxTiles', '512',
+			'--dithKern', 'Ordered2x1']);
+		process.stdout.on('data', (data) => {
+			console.log(data.toString());
+		});
+		process.stderr.on('data', (data) => {
+			console.error(data.toString());
+		});
+		process.on('exit', (code) => {
+			if (code) {
+				reject(new Error(`Child returned error code ${code}`));
+			} else {
+				console.log(`Finished generating ${dest}.`);
+				resolve({ dest });
+			}
+		});
+	});
 	
-	const process = spawn('node', ['--max-old-space-size=4096', rgbQuantSmsPath,
-		'convert', 
-		MOVIE_DIR + src, 
-		MOVIE_DIR + dest,
-		'--colors', '16',
-		'--maxTiles', '512',
-		'--dithKern', 'Ordered2x1']);
-	process.stdout.on('data', (data) => {
-		console.log(data.toString());
-	});
-	process.stderr.on('data', (data) => {
-		console.error(data.toString());
-	});
-	process.on('exit', (code) => {
-		console.log(`Child exited with code ${code}`);
-	});
+	await Promise.all([executeConverter(sortedFileNames[25]), executeConverter(sortedFileNames[26])]);
 })();
