@@ -73,5 +73,14 @@ const convertFn = async src => {
 		});
 	});
 	
-	await Promise.all([executeConverter(sortedFileNames[25]), executeConverter(sortedFileNames[26])]);
+	let queuePosition = 0;
+	const spawnWorker = async () => {
+		while (queuePosition < sortedFileNames.length) {
+			const src = sortedFileNames[queuePosition];
+			queuePosition++;			
+			await executeConverter(src);
+		}
+	}
+	
+	await Promise.all(Array(8).fill(0).map(() => spawnWorker()));
 })();
