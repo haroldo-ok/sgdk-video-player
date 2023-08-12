@@ -9,8 +9,9 @@ int main(u16 hard)
 {
     // disable interrupt when accessing VDP
     SYS_disableInts();
-    // initialization
-    VDP_setScreenWidth256();
+	
+	// workaround to tiles leaking into PLAN A
+	VDP_setBPlanAddress(VDP_getAPlanAddress());
 
     // set all palette to black
     VDP_setPaletteColors(0, (u16*) palette_black, 64);
