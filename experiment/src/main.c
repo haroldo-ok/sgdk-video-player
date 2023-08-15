@@ -1,6 +1,8 @@
 #include <genesis.h>
 
 #include "gfx.h"
+#include "sound.h"
+
 #include "dma.h"
 
 #include "generated/movie_res.h"
@@ -25,7 +27,13 @@ int main(u16 hard)
 
     while(TRUE)
     {
+		SND_startPlay_2ADPCM(sound_wav, sizeof(sound_wav), SOUND_PCM_CH1, FALSE);
+		
 		for (u16 frameNumber = 0; frameNumber != movie_test.frameCount; frameNumber++) {
+			// Wait a while to sync (TODO: calculate frame dinamically)
+			VDP_waitVInt();
+			VDP_waitVInt();
+
 			const Image *frame = movie_test.frames[frameNumber];
 			u16 idx = activeBuffer ? idx1 : idx2;
 			u16 palNum = activeBuffer ? PAL0 : PAL1;
