@@ -49,10 +49,6 @@ int main(u16 hard)
 		SND_startPlay_2ADPCM(sound_wav, sizeof(sound_wav), SOUND_PCM_CH1, FALSE);
 		
 		while (videoFrame < movie_test.frameCount) {
-			// Wait a while to sync (TODO: calculate frame dinamically)
-			VDP_waitVInt();
-			VDP_waitVInt();
-
 			const Image *frame = movie_test.frames[videoFrame];
 			u16 idx = activeBuffer ? idx1 : idx2;
 			u16 palNum = activeBuffer ? PAL0 : PAL1;
