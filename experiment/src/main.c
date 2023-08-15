@@ -7,6 +7,13 @@
 
 #include "generated/movie_res.h"
 
+/// Counter to be incremented by background task
+static volatile uint32_t hwFrameCount = 0;
+
+void VIntHandler() {
+	hwFrameCount++;
+}
+
 int main(u16 hard)
 {
     // disable interrupt when accessing VDP
@@ -18,29 +25,40 @@ int main(u16 hard)
     // set all palette to black
     VDP_setPaletteColors(0, (u16*) palette_black, 64);
 
+	// Set up frame counter
+	SYS_setVIntCallback(VIntHandler);
+
     // VDP process done, we can re enable interrupts
     SYS_enableInts();
 	
 	bool activeBuffer = FALSE;
 	u16 idx1 = TILE_USERINDEX;
 	u16 idx2 = idx1 + movie_test.frames[0]->tilemap->w * movie_test.frames[0]->tilemap->h;
+	
+	u16 videoFrameRate = 12;
+	u16 systemFrameRate = IS_PALSYSTEM ? 50 : 60;
 
     while(TRUE)
     {
+		u16 videoFrame = 0;
+
+		SYS_disableInts();
+		hwFrameCount = 0;
+		SYS_enableInts();
+
 		SND_startPlay_2ADPCM(sound_wav, sizeof(sound_wav), SOUND_PCM_CH1, FALSE);
 		
-		for (u16 frameNumber = 0; frameNumber != movie_test.frameCount; frameNumber++) {
+		while (videoFrame < movie_test.frameCount) {
 			// Wait a while to sync (TODO: calculate frame dinamically)
 			VDP_waitVInt();
 			VDP_waitVInt();
 
-			const Image *frame = movie_test.frames[frameNumber];
+			const Image *frame = movie_test.frames[videoFrame];
 			u16 idx = activeBuffer ? idx1 : idx2;
 			u16 palNum = activeBuffer ? PAL0 : PAL1;
 			u16 palIdx = activeBuffer ? 0 : 16;
 
 			VDP_loadTileSet(frame->tileset, idx, DMA_QUEUE);
-			DMA_flushQueue();
 			
 			TileMap *ctmap = unpackTileMap(frame->tilemap, NULL);
 			VDP_setTileMapEx(BG_A, ctmap, TILE_ATTR_FULL(palNum, FALSE, FALSE, FALSE, idx), 0, 0, 0, 0, frame->tilemap->w, frame->tilemap->h, DMA_QUEUE);
@@ -52,6 +70,20 @@ int main(u16 hard)
 			MEM_free(ctmap);
 			
 			activeBuffer = !activeBuffer;
+			
+			// Waits for next video frame
+			
+			u16 previousVideoFrame = videoFrame;
+			while (videoFrame == previousVideoFrame) {
+				SYS_disableInts();
+				uint32_t frameCount = hwFrameCount;
+				SYS_enableInts();
+				
+				videoFrame = frameCount * videoFrameRate / systemFrameRate;
+				if (videoFrame == previousVideoFrame) {
+					VDP_waitVInt();
+				}
+			}
 		}
 		
         VDP_waitVInt();
