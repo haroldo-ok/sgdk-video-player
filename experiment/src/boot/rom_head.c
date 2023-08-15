@@ -10,8 +10,8 @@ const ROMHeader rom_header = {
     "SEGA MEGA DRIVE ",
 #endif
     "(C)Haroldo 2023 ",
-    "SGDK VIDEO PLAYER TEST v0.0.5                   ",
-    "SGDK VIDEO PLAYER TEST v0.0.5                   ",
+    "SGDK VIDEO PLAYER TEST v0.0.6                   ",
+    "SGDK VIDEO PLAYER TEST v0.0.6                   ",
     "GM 00000000-00",
     0x000,
     "JD              ",
@@ -28,6 +28,6 @@ const ROMHeader rom_header = {
     0x00200000,
     0x0020FFFF,
     "            ",
-    "SGDK VIDEO PLAYER TEST v0.0.5           ",
+    "SGDK VIDEO PLAYER TEST v0.0.6           ",
     "JUE             "
 };
