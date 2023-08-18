@@ -57,7 +57,7 @@ int main(u16 hard)
 			VDP_loadTileSet(frame->tileset, idx, DMA_QUEUE);
 			
 			TileMap *ctmap = unpackTileMap(frame->tilemap, NULL);
-			VDP_setTileMapEx(BG_A, ctmap, TILE_ATTR_FULL(palNum, FALSE, FALSE, FALSE, idx), 0, 0, 0, 0, frame->tilemap->w, frame->tilemap->h, DMA_QUEUE);
+			VDP_setTileMapEx(BG_A, ctmap, TILE_ATTR_FULL(palNum, FALSE, FALSE, FALSE, idx), 0, 0, 0, 28, frame->tilemap->w, 28, DMA_QUEUE);
 			
 			VDP_waitVInt();
 			
