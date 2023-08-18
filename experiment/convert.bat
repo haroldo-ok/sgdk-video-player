@@ -9,3 +9,4 @@ node generator.js
 
 rem magick tmpmv_test\frame_19.jpg tmpmv_test\frame_20.jpg -append tmpmv_test\frames_19_to_20.png
 rem npx rgbquant-sms convert --colors=16 --max-tiles=512 --dith-kern=Ordered2x1 tmpmv_test\frames_19_to_20.png tmpmv_test\frames_19_to_20b.pngpx rgbquant-sms convert tmpmv_test\frames_19_to_20.png tmpmv_test\frames_19_to_20b.png
+rem npx rgbquant-sms convert --colors=16 --max-tiles=512 --dith-kern=Ordered2x1 tmpmv_test/rawframes_1_to_2.png tmpmv_test/frames_1_to_2.png

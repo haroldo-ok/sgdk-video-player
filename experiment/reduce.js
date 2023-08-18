@@ -37,7 +37,8 @@ const { convert } = require('rgbquant-sms');
 
 		console.log(`Starting to reduce colors on ${src} to ${dest}...`);
 				
-		const process = spawn('npx', ['rgbquant-sms',
+		const process = spawn('npx', [
+			'--max-old-space-size=4096', 'rgbquant-sms',
 			'convert', 
 			MOVIE_DIR + src, 
 			MOVIE_DIR + dest,
@@ -52,13 +53,14 @@ const { convert } = require('rgbquant-sms');
 		});
 		process.on('exit', (code) => {
 			if (code) {
-				reject(new Error(`Child returned error code ${code}`));
+				reject(new Error(`Child returned error code ${code} while generating ${dest}`));
 			} else {
 				console.log(`Finished generating ${dest}.`);
 				resolve({ dest });
 			}
 		});
 		process.on('error', (e) => {
+			console.fatal(e);
 			reject(e);
 		});
 	});
@@ -72,5 +74,5 @@ const { convert } = require('rgbquant-sms');
 		}
 	}
 	
-	await Promise.all(Array(8).fill(0).map(() => spawnWorker()));
+	await Promise.all(Array(7).fill(0).map(() => spawnWorker()));
 })();
