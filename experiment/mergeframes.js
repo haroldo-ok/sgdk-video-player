@@ -24,8 +24,6 @@ if (!fs.existsSync(RES_DIR)) {
 	fs.mkdirSync(RES_DIR, { recursive: true });
 }
 
-console.log('sortedFileNames', sortedFileNames);
-
 const partition = (arr, partitionSize) => arr.reduce((acc, o) => {
 	const tail = acc[acc.length - 1];
 	if (!tail || tail.length >= partitionSize) {
@@ -49,7 +47,7 @@ const executeJoiner = async (srcFiles, destFile) => new Promise((resolve, reject
 	process.stdout.on('data', (data) => {
 		console.log(data.toString());
 	});
-	process.stderr.on('data', (data) => {
+	process.stderr.on('error', (data) => {
 		console.error(data.toString());
 	});
 	process.on('exit', (code) => {
@@ -66,7 +64,7 @@ const executeJoiner = async (srcFiles, destFile) => new Promise((resolve, reject
 	let frameNumber = 1;
 	for (srcFiles of partition(sortedFileNames, 2)) {
 		const finalFrame = frameNumber + srcFiles.length - 1;
-		const destFile = `frames_raw_${frameNumber}_to_${finalFrame}.png`;
+		const destFile = `rawframes_${frameNumber}_to_${finalFrame}.png`;
 		await executeJoiner(srcFiles, destFile);
 		frameNumber += srcFiles.length;
 	}
