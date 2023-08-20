@@ -35,5 +35,15 @@ const extractVideoFrames = async (srcVideo, destDir, { imagemagickDir }) => exec
 	'-acodec', 'pcm_u8',
 	`"${destDir}/sound.wav"`]);
 
+const reduceTileCount = async (srcImage, destImage, { imagemagickDir } = {}) => executeCommand(
+	'npx',
+	['--max-old-space-size=4096', 
+	'rgbquant-sms',
+	'convert', 
+	`"${srcImage}"`, 
+	`"${destImage}"`,
+	'--colors', 16,
+	'--maxTiles', 512,
+	'--dithKern', 'Ordered2x1']);
 
-module.exports = { executeCommand, extractVideoFrames };
+module.exports = { executeCommand, extractVideoFrames, reduceTileCount };
