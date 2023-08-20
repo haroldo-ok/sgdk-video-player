@@ -2,6 +2,8 @@
 
 'use strict';
 
+const fs = require('fs');
+
 /* if called directly from command line or from a shell script */
 if (require.main === module) {
 	const yargs = require('yargs');
@@ -17,6 +19,11 @@ if (require.main === module) {
 				.positional('destDir', {
 					type: 'string',
 					describe: 'The destination directory, where the output results will be placed'
+				})
+				.check((argv, options) => {
+					if (!fs.existsSync(argv.src)) {
+						return `The provided source video file does not exist: ${argv.src}`;
+					}
 				});
 		})
 		.demandCommand(1, 'You need to inform at least one command before moving on')
