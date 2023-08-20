@@ -2,13 +2,11 @@
 
 const fs = require('fs');
 
-const { executeCommand } = require('./execute');
+const { extractVideoFrames } = require('./execute');
 
 const checkFileExists = async fileName => fs.promises.access(fileName, fs.constants.F_OK)
    .then(() => true)
    .catch(() => false);
-
-const getCommand = (imagemagickDir, command) => imagemagickDir ? imagemagickDir + '/' + command : command;
 
 const convertVideo = async (srcVideo, destDir, { imagemagickDir }) => {
 	console.log('convertVideo', { srcVideo, destDir, imagemagickDir });
@@ -21,15 +19,7 @@ const convertVideo = async (srcVideo, destDir, { imagemagickDir }) => {
 		await fs.promises.mkdir(destDir, { recursive: true });
 	}
 	
-	await executeCommand(getCommand(imagemagickDir, 'ffmpeg'),
-		['-i', `"${srcVideo}"`, 
-		'-r', 12, 
-		'-s', '320x224',
-		`"${destDir}/frame_%d.jpg"`,
-		'-ar', 22050, 
-		'-ac', 1, 
-		'-acodec', 'pcm_u8',
-		`"${destDir}/sound.wav"`]);
+	await extractVideoFrames(srcVideo, destDir, { imagemagickDir });
 }
 
 module.exports = { convertVideo };
