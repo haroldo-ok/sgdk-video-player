@@ -24,7 +24,16 @@ if (require.main === module) {
 					if (!fs.existsSync(argv.src)) {
 						return `The provided source video file does not exist: ${argv.src}`;
 					}
+					
+					return true;
 				});
+		})
+		.options({
+			'imagemagick-dir': {
+				alias: 'kd',
+				describe: 'Directory where ImageMagick is located',
+				type: 'string'
+			}
 		})
 		.demandCommand(1, 'You need to inform at least one command before moving on')
 		.strict()
