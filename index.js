@@ -3,6 +3,10 @@
 'use strict';
 
 const fs = require('fs');
+const _ = require('underscore');
+
+const { convertVideo } = require('./js/convert');
+console.log('convertVideo', convertVideo);
 
 /* if called directly from command line or from a shell script */
 if (require.main === module) {
@@ -39,4 +43,11 @@ if (require.main === module) {
 		.strict()
 		.help()
 		.argv;		
+		
+	if (commandLine._.includes('convert')) {
+		const options = _.pick(commandLine, 'imagemagickDir');
+		convertVideo(commandLine.src, commandLine.destDir, options);
+	}
 }
+
+module.exports = { convertVideo };

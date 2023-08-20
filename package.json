@@ -18,6 +18,7 @@
   "homepage": "https://github.com/haroldo-ok/sgdk-video-player#readme",
   "dependencies": {
     "branchy": "^2.0.0",
+    "lodash": "^4.17.21",
     "rgbquant-sms": "^0.2.2",
     "yargs": "^17.7.2"
   }
