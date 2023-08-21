@@ -3,10 +3,10 @@
 'use strict';
 
 const fs = require('fs');
+const os = require('os');
 const _ = require('underscore');
 
 const { convertVideo } = require('./js/convert');
-console.log('convertVideo', convertVideo);
 
 /* if called directly from command line or from a shell script */
 if (require.main === module) {
@@ -24,9 +24,19 @@ if (require.main === module) {
 					type: 'string',
 					describe: 'The destination directory, where the output results will be placed'
 				})
+				.options({
+					'cpu-cores': {
+						describe: 'Number of CPU cores to use. If ommited, will use all of them.',
+						type: 'int'
+					}
+				})
 				.check((argv, options) => {
 					if (!fs.existsSync(argv.src)) {
 						return `The provided source video file does not exist: ${argv.src}`;
+					}
+					
+					if (!argv.cpuCores) {
+						argv.cpuCores = os.cpus().length;
 					}
 					
 					return true;
@@ -45,7 +55,7 @@ if (require.main === module) {
 		.argv;		
 		
 	if (commandLine._.includes('convert')) {
-		const options = _.pick(commandLine, 'imagemagickDir');
+		const options = _.pick(commandLine, 'imagemagickDir', 'cpuCores');
 		convertVideo(commandLine.src, commandLine.destDir, options);
 	}
 }

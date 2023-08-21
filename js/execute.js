@@ -1,5 +1,6 @@
 'use strict';
 
+const os = require('os');
 const { spawn } = require('child_process');
 
 const getCommand = (imagemagickDir, command) => imagemagickDir ? imagemagickDir + '/' + command : command;
@@ -24,6 +25,26 @@ const executeCommand = async (command, args, {} = {}) => new Promise((resolve, r
 	});
 });
 
+const spawnWorkers = async (executor, jobs, { cpuCores, onProgress } = {}) => {
+	cpuCores = cpuCores || os.cpus().length;
+	
+	let queuePosition = 0;
+	let finishedJobs = 0;
+	const spawnWorker = async () => {
+		while (queuePosition < jobs.length) {
+			const job = jobs[queuePosition];
+			queuePosition++;		
+			
+			await executor(job);
+			finishedJobs++;
+			
+			onProgress && onProgress({ job, finishedJobs, percent: finishedJobs * 100.0 / jobs.length });
+		}
+	}
+	
+	await Promise.all(Array(cpuCores).fill(0).map(() => spawnWorker()));	
+}
+
 const extractVideoFrames = async (srcVideo, destDir, { imagemagickDir }) => executeCommand(
 	getCommand(imagemagickDir, 'ffmpeg'),
 	['-i', `"${srcVideo}"`, 
@@ -46,4 +67,4 @@ const reduceTileCount = async (srcImage, destImage, { imagemagickDir } = {}) => 
 	'--maxTiles', 512,
 	'--dithKern', 'Ordered2x1']);
 
-module.exports = { executeCommand, extractVideoFrames, reduceTileCount };
+module.exports = { executeCommand, spawnWorkers, extractVideoFrames, reduceTileCount };
