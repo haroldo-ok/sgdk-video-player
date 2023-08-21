@@ -7,7 +7,6 @@ const os = require('os');
 const _ = require('underscore');
 
 const { convertVideo } = require('./js/convert');
-console.log('convertVideo', convertVideo);
 
 /* if called directly from command line or from a shell script */
 if (require.main === module) {
@@ -56,7 +55,7 @@ if (require.main === module) {
 		.argv;		
 		
 	if (commandLine._.includes('convert')) {
-		const options = _.pick(commandLine, 'imagemagickDir');
+		const options = _.pick(commandLine, 'imagemagickDir', 'cpuCores');
 		convertVideo(commandLine.src, commandLine.destDir, options);
 	}
 }

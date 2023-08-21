@@ -26,9 +26,8 @@ const listFilesRegex = async (dir, fileRegex) => {
 	return sortedFileNames;
 };
 
-const convertVideo = async (srcVideo, destDir, { imagemagickDir }) => {
-	console.log('convertVideo', { srcVideo, destDir, imagemagickDir });
-	
+const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores }) => {
+
 	if (!await checkFileExists(srcVideo)) {
 		throw new Error(`Input video not found: ${srcVideo}`);
 	}
