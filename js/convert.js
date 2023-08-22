@@ -3,7 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const { spawnWorkers, extractVideoFrames, reduceTileCount } = require('./execute');
+const { spawnWorkers, extractVideoFrames, reduceTileCount, convertImagesToIndexed } = require('./execute');
+const { generateCode } = require('./generate');
 
 const checkFileExists = async fileName => fs.promises.access(fileName, fs.constants.F_OK)
    .then(() => true)
@@ -32,7 +33,7 @@ const listFilesRegex = async (dir, fileRegex) => {
 	return sortedFileNames;
 };
 
-const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores }) => {
+const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores, alias }) => {
 
 	if (!await checkFileExists(srcVideo)) {
 		throw new Error(`Input video not found: ${srcVideo}`);
@@ -63,6 +64,11 @@ const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores }) => 
 		cpuCores,
 		onProgress: ({ percent }) => console.log(`${percent.toFixed(2)}% done: ${srcVideo}`)
 	});
+	
+	await convertImagesToIndexed(destDir, { imagemagickDir });
+	
+	const targetImages = sourceFrames.map(frameSrc => changeFileExtension(frameSrc, '.png'));
+	await generateCode(targetImages, destDir, alias);
 }
 
 module.exports = { convertVideo };

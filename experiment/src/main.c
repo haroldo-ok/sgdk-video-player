@@ -1,11 +1,18 @@
 #include <genesis.h>
 
-#include "gfx.h"
-#include "sound.h"
+//#include "gfx.h"
+//#include "sound.h"
 
-#include "dma.h"
+//#include "dma.h"
 
-#include "generated/movie_res.h"
+// #include "../res/generated/movie_res.h"
+
+typedef struct MovieData {
+	u16 frameCount;
+	const Image *frames[];
+} MovieData;
+
+extern const MovieData movie_HD_SEGA_logo_4x3_mp4;
 
 /// Counter to be incremented by background task
 static volatile uint32_t hwFrameCount = 0;
@@ -33,7 +40,7 @@ int main(u16 hard)
 	
 	bool activeBuffer = FALSE;
 	u16 idx1 = TILE_USERINDEX;
-	u16 idx2 = idx1 + movie_test.frames[0]->tilemap->w * movie_test.frames[0]->tilemap->h;
+	u16 idx2 = idx1 + movie_HD_SEGA_logo_4x3_mp4.frames[0]->tilemap->w * movie_HD_SEGA_logo_4x3_mp4.frames[0]->tilemap->h;
 	
 	u16 videoFrameRate = 12;
 	u16 systemFrameRate = IS_PALSYSTEM ? 50 : 60;
@@ -48,8 +55,8 @@ int main(u16 hard)
 
 		SND_startPlay_2ADPCM(sound_wav, sizeof(sound_wav), SOUND_PCM_CH1, FALSE);
 		
-		while (videoFrame < movie_test.frameCount) {
-			const Image *frame = movie_test.frames[videoFrame];
+		while (videoFrame < movie_HD_SEGA_logo_4x3_mp4.frameCount) {
+			const Image *frame = movie_HD_SEGA_logo_4x3_mp4.frames[videoFrame];
 			u16 idx = activeBuffer ? idx1 : idx2;
 			u16 palNum = activeBuffer ? PAL0 : PAL1;
 			u16 palIdx = activeBuffer ? 0 : 16;
