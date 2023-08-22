@@ -43,11 +43,9 @@ const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores, alias
 		await fs.promises.mkdir(destDir, { recursive: true });
 	}
 	
-	/* FIXME: Disabled for testing
 	await clearDir(destDir);
 		
 	await extractVideoFrames(srcVideo, destDir, { imagemagickDir });
-	*/
 	
 	const sourceFrames = await listFilesRegex(destDir, /^frame_(\d+)\.jpg$/);
 	
@@ -58,7 +56,6 @@ const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores, alias
 		return { src: fullSrc, dest };
 	});
 
-	/* FIXME: Disabled for testing
 	await spawnWorkers(async ({ src, dest }) => {
 		console.log(`Converting ${src} to ${dest}...`);
 		await reduceTileCount(src, dest);
@@ -67,7 +64,6 @@ const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores, alias
 		cpuCores,
 		onProgress: ({ percent }) => console.log(`${percent.toFixed(2)}% done: ${srcVideo}`)
 	});
-	*/
 	
 	await convertImagesToIndexed(destDir, { imagemagickDir });
 	
