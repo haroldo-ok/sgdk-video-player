@@ -66,5 +66,13 @@ const reduceTileCount = async (srcImage, destImage, { imagemagickDir } = {}) => 
 	'--colors', 16,
 	'--maxTiles', 512,
 	'--dithKern', 'Ordered2x1']);
+	
+const convertImagesToIndexed = async (destDir, { imagemagickDir }) => executeCommand(
+	getCommand(imagemagickDir, 'magick'),
+	['mogrify',
+	`-path`, destDir, 
+	'-colors', 16,
+	'-format', 'png', 
+	`${destDir}/*.png`])
 
-module.exports = { executeCommand, spawnWorkers, extractVideoFrames, reduceTileCount };
+module.exports = { executeCommand, spawnWorkers, extractVideoFrames, reduceTileCount, convertImagesToIndexed };
