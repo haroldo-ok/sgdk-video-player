@@ -19,16 +19,22 @@ const MovieData ${alias} = {
 	${images.length},
 
 	{
-${images.map(s => `		&${alias}_${removeFileExtension(s)}`).join(',\n')}
+${images.map(s => `		&${alias}__${removeFileExtension(s)}`).join(',\n')}
 	}
 
 };
 
 `;
 
+const movieResourceTemplate = (images, alias) => images
+	.map(s => `IMAGE ${alias}__${removeFileExtension(s)} "${s}" FAST`)
+	.join('\n') + '\n';
+
+
 const generateCode = async (images, destDir, alias) => {
 	return Promise.all([
-		fs.promises.writeFile(path.join(destDir, 'movie_res.c'), movieDataTemplate(images, alias))
+		fs.promises.writeFile(path.join(destDir, 'movie_res.c'), movieDataTemplate(images, alias)),
+		fs.promises.writeFile(path.join(destDir, 'movie_frames.res'), movieResourceTemplate(images, alias))
 	]);
 }
 
