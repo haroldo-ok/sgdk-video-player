@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { spawnWorkers, extractVideoFrames, reduceTileCount } = require('./execute');
+const { generateCode } = require('./generate');
 
 const checkFileExists = async fileName => fs.promises.access(fileName, fs.constants.F_OK)
    .then(() => true)
@@ -32,7 +33,7 @@ const listFilesRegex = async (dir, fileRegex) => {
 	return sortedFileNames;
 };
 
-const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores }) => {
+const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores, alias }) => {
 
 	if (!await checkFileExists(srcVideo)) {
 		throw new Error(`Input video not found: ${srcVideo}`);
@@ -55,6 +56,7 @@ const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores }) => 
 		return { src: fullSrc, dest };
 	});
 
+	/* TODO: Removed for testing
 	await spawnWorkers(async ({ src, dest }) => {
 		console.log(`Converting ${src} to ${dest}...`);
 		await reduceTileCount(src, dest);
@@ -63,6 +65,10 @@ const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores }) => 
 		cpuCores,
 		onProgress: ({ percent }) => console.log(`${percent.toFixed(2)}% done: ${srcVideo}`)
 	});
+	*/
+	
+	const targetImages = sourceFrames.map(frameSrc => changeFileExtension(frameSrc, '.png'));
+	await generateCode(targetImages, destDir, alias);
 }
 
 module.exports = { convertVideo };

@@ -22,12 +22,17 @@ if (require.main === module) {
 				})
 				.positional('destDir', {
 					type: 'string',
-					describe: 'The destination directory, where the output results will be placed'
+					describe: 'The destination directory, where the output results will be placed.\n' +
+						'The tool may decide to clear the target directory.'
 				})
 				.options({
 					'cpu-cores': {
 						describe: 'Number of CPU cores to use. If ommited, will use all of them.',
 						type: 'int'
+					},
+					'alias': {
+						describe: 'Alias to use when generating the C constants. If ommited, it will be generated from <src>.',
+						type: 'string'
 					}
 				})
 				.check((argv, options) => {
@@ -37,6 +42,10 @@ if (require.main === module) {
 					
 					if (!argv.cpuCores) {
 						argv.cpuCores = os.cpus().length;
+					}
+					
+					if (!argv.alias) {
+						argv.alias = 'movie_' + argv.src.replace(/[^A-Za-z0-9]/g, '_').replace(/__+/g, '_');
 					}
 					
 					return true;
@@ -55,7 +64,7 @@ if (require.main === module) {
 		.argv;		
 		
 	if (commandLine._.includes('convert')) {
-		const options = _.pick(commandLine, 'imagemagickDir', 'cpuCores');
+		const options = _.pick(commandLine, 'imagemagickDir', 'cpuCores', 'alias');
 		convertVideo(commandLine.src, commandLine.destDir, options);
 	}
 }
