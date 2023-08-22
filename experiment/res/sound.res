@@ -1,1 +1,1 @@
-WAV sound_wav "../tmpmv_test/sound.wav" 2ADPCM
+WAV sound_wav "tmpmv_aaaa/sound.wav" 2ADPCM

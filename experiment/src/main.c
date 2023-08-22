@@ -1,18 +1,12 @@
 #include <genesis.h>
 
-//#include "gfx.h"
-//#include "sound.h"
+#include "gfx.h"
+#include "sound.h"
 
-//#include "dma.h"
+#include "dma.h"
 
-// #include "../res/generated/movie_res.h"
+#include "movie_res.h"
 
-typedef struct MovieData {
-	u16 frameCount;
-	const Image *frames[];
-} MovieData;
-
-extern const MovieData movie_HD_SEGA_logo_4x3_mp4;
 
 /// Counter to be incremented by background task
 static volatile uint32_t hwFrameCount = 0;
