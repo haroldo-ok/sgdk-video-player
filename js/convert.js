@@ -73,7 +73,7 @@ const convertVideo = async (srcVideo, resDir, { imagemagickDir, cpuCores, alias 
 	await convertImagesToIndexed(destDir, { imagemagickDir });
 	
 	const targetImages = sourceFrames.map(frameSrc => changeFileExtension(frameSrc, '.png'));
-	await generateCode(targetImages, destDir, alias);
+	await generateCode(targetImages, resDir, alias);
 }
 
 module.exports = { convertVideo };

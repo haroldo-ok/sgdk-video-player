@@ -13,7 +13,7 @@ const removeFileExtension = file => changeFileExtension(file, '');
 
 const movieDataTemplate = (images, alias) => `
 #include "movie_res.h"
-#include "movie_frames.h"
+#include "${alias}__frames.h"
 
 const MovieData ${alias} = {
 	${images.length},
@@ -27,14 +27,14 @@ ${images.map(s => `		&${alias}__${removeFileExtension(s)}`).join(',\n')}
 `;
 
 const movieResourceTemplate = (images, alias) => images
-	.map(s => `IMAGE ${alias}__${removeFileExtension(s)} "${s}" FAST`)
+	.map(s => `IMAGE ${alias}__${removeFileExtension(s)} "tmpmv_${alias}/${s}" FAST`)
 	.join('\n') + '\n';
 
 
-const generateCode = async (images, destDir, alias) => {
+const generateCode = async (images, resDir, alias) => {
 	return Promise.all([
-		fs.promises.writeFile(path.join(destDir, 'movie_res.c'), movieDataTemplate(images, alias)),
-		fs.promises.writeFile(path.join(destDir, 'movie_frames.res'), movieResourceTemplate(images, alias))
+		fs.promises.writeFile(path.join(resDir, `${alias}.c`), movieDataTemplate(images, alias)),
+		fs.promises.writeFile(path.join(resDir, `${alias}__frames.res`), movieResourceTemplate(images, alias))
 	]);
 }
 

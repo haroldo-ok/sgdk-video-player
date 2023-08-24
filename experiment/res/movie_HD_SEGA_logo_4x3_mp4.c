@@ -1,6 +1,6 @@
 
 #include "movie_res.h"
-#include "movie_frames.h"
+#include "movie_HD_SEGA_logo_4x3_mp4__frames.h"
 
 const MovieData movie_HD_SEGA_logo_4x3_mp4 = {
 	32,
