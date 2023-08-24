@@ -6,6 +6,7 @@
 #include "dma.h"
 
 #include "movie_res.h"
+#include "movie_HD_SEGA_logo_4x3_mp4.h"
 
 /// Counter to be incremented by background task
 static volatile uint32_t hwFrameCount = 0;

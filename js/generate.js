@@ -11,6 +11,18 @@ const changeFileExtension = (file, extension) => {
 
 const removeFileExtension = file => changeFileExtension(file, '');
 
+const movieDataHeaderTemplate = (images, alias) => `
+#ifndef _HEADER_${alias}
+#define _HEADER_${alias}
+
+#include "movie_res.h"
+
+extern const MovieData ${alias};
+
+#endif // _HEADER_${alias}
+
+`;
+
 const movieDataTemplate = (images, alias) => `
 #include "movie_res.h"
 #include "${alias}__frames.h"
@@ -39,6 +51,7 @@ const movieResourceTemplate = (images, alias) => images
 
 const generateCode = async (images, resDir, alias) => {
 	return Promise.all([
+		fs.promises.writeFile(path.join(resDir, `${alias}.h`), movieDataHeaderTemplate(images, alias)),
 		fs.promises.writeFile(path.join(resDir, `${alias}.c`), movieDataTemplate(images, alias)),
 		fs.promises.writeFile(path.join(resDir, `${alias}__frames.res`), movieResourceTemplate(images, alias))
 	]);
