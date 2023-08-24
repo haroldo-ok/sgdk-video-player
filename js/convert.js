@@ -33,22 +33,26 @@ const listFilesRegex = async (dir, fileRegex) => {
 	return sortedFileNames;
 };
 
-const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores, alias }) => {
+const convertVideo = async (srcVideo, resDir, { imagemagickDir, cpuCores, alias }) => {
 
 	if (!await checkFileExists(srcVideo)) {
 		throw new Error(`Input video not found: ${srcVideo}`);
 	}
 
+	const destDir = path.join(resDir, `tmpmv_${alias}`);
 	if (!await checkFileExists(destDir)) {
 		await fs.promises.mkdir(destDir, { recursive: true });
 	}
-	
+
+	/* FIXME: Disabled for testing
 	await clearDir(destDir);
 		
 	await extractVideoFrames(srcVideo, destDir, { imagemagickDir });
+	*/
 	
 	const sourceFrames = await listFilesRegex(destDir, /^frame_(\d+)\.jpg$/);
-	
+
+	/* FIXME: Disabled for testing
 	const tileCountJobs = sourceFrames.map(frameSrc => {
 		const fullSrc = path.join(destDir, frameSrc);
 		const dest = changeFileExtension(fullSrc, '.png');
@@ -64,6 +68,7 @@ const convertVideo = async (srcVideo, destDir, { imagemagickDir, cpuCores, alias
 		cpuCores,
 		onProgress: ({ percent }) => console.log(`${percent.toFixed(2)}% done: ${srcVideo}`)
 	});
+	*/
 	
 	await convertImagesToIndexed(destDir, { imagemagickDir });
 	
