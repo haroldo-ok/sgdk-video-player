@@ -14,16 +14,15 @@ if (require.main === module) {
 
 	const commandLine = yargs.scriptName('sgdk-video-player')
 		.usage('$0 <cmd> [args]')
-		.command('convert <src> <destDir>', 'Converts a video file and outputs the result in the destination directory', (yargs) => {
+		.command('convert <src> <resDir>', 'Converts a video file and outputs the result in the resource directory', (yargs) => {
 			yargs
 				.positional('src', {
 					type: 'string',
 					describe: 'The source video, the one that will be converted'
 				})
-				.positional('destDir', {
+				.positional('resDir', {
 					type: 'string',
-					describe: 'The destination directory, where the output results will be placed.\n' +
-						'The tool may decide to clear the target directory.'
+					describe: 'The resource directory, where the generated sources will be placed.'
 				})
 				.options({
 					'cpu-cores': {
@@ -65,7 +64,7 @@ if (require.main === module) {
 		
 	if (commandLine._.includes('convert')) {
 		const options = _.pick(commandLine, 'imagemagickDir', 'cpuCores', 'alias');
-		convertVideo(commandLine.src, commandLine.destDir, options);
+		convertVideo(commandLine.src, commandLine.resDir, options);
 	}
 }
 

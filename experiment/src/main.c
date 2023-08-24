@@ -1,21 +1,17 @@
 #include <genesis.h>
 
-//#include "gfx.h"
-//#include "sound.h"
+#include "gfx.h"
+#include "sound.h"
 
-//#include "dma.h"
+#include "dma.h"
 
-// #include "../res/generated/movie_res.h"
-
-typedef struct MovieData {
-	u16 frameCount;
-	const Image *frames[];
-} MovieData;
-
-extern const MovieData movie_HD_SEGA_logo_4x3_mp4;
+#include "movie_res.h"
+#include "movie_HD_SEGA_logo_4x3_mp4.h"
 
 /// Counter to be incremented by background task
 static volatile uint32_t hwFrameCount = 0;
+
+extern const MovieData movie_HD_SEGA_logo_4x3_mp4;
 
 void VIntHandler() {
 	hwFrameCount++;
@@ -40,7 +36,7 @@ int main(u16 hard)
 	
 	bool activeBuffer = FALSE;
 	u16 idx1 = TILE_USERINDEX;
-	u16 idx2 = idx1 + movie_HD_SEGA_logo_4x3_mp4.frames[0]->tilemap->w * movie_HD_SEGA_logo_4x3_mp4.frames[0]->tilemap->h;
+	u16 idx2 = idx1 + movie_HD_SEGA_logo_4x3_mp4.w * movie_HD_SEGA_logo_4x3_mp4.h;
 	
 	u16 videoFrameRate = 12;
 	u16 systemFrameRate = IS_PALSYSTEM ? 50 : 60;
@@ -53,7 +49,7 @@ int main(u16 hard)
 		hwFrameCount = 0;
 		SYS_enableInts();
 
-		SND_startPlay_2ADPCM(sound_wav, sizeof(sound_wav), SOUND_PCM_CH1, FALSE);
+		SND_startPlay_2ADPCM(movie_HD_SEGA_logo_4x3_mp4.sound, movie_HD_SEGA_logo_4x3_mp4.soundLen, SOUND_PCM_CH1, FALSE);
 		
 		while (videoFrame < movie_HD_SEGA_logo_4x3_mp4.frameCount) {
 			const Image *frame = movie_HD_SEGA_logo_4x3_mp4.frames[videoFrame];

@@ -5,4 +5,4 @@ rem node --max-old-space-size=4096 reduce.js
 rem mogrify -path tmpmv_test -colors 16 -format png tmpmv_test\*.png
 rem node generator.js
 
-node ../ convert "HD SEGA logo 4x3.mp4" tmpmv_aaaa
+node ../ convert "HD SEGA logo 4x3.mp4" res
