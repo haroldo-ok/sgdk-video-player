@@ -16,7 +16,12 @@ const movieDataTemplate = (images, alias) => `
 #include "${alias}__frames.h"
 
 const MovieData ${alias} = {
+	0x01,
+	40, 28,
 	${images.length},
+	
+	${alias}__sound,
+	sizeof(${alias}__sound),
 
 	{
 ${images.map(s => `		&${alias}__${removeFileExtension(s)}`).join(',\n')}
@@ -28,7 +33,8 @@ ${images.map(s => `		&${alias}__${removeFileExtension(s)}`).join(',\n')}
 
 const movieResourceTemplate = (images, alias) => images
 	.map(s => `IMAGE ${alias}__${removeFileExtension(s)} "tmpmv_${alias}/${s}" FAST`)
-	.join('\n') + '\n';
+	.join('\n') + '\n' +
+	`WAV ${alias}__sound "tmpmv_${alias}/sound.wav" 2ADPCM` + '\n';
 
 
 const generateCode = async (images, resDir, alias) => {
