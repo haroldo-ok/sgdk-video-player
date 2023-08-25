@@ -16,26 +16,39 @@
 </p>
 
 > A video converter/video player for SGDK 
+ 
+*(Work-In-Progress: the converter is done, but it is still missing a C library to make it easier to play on SGDK)*
 
 ### 🏠 [Homepage](https://github.com/haroldo-ok/sgdk-video-player#readme)
 
 ## Install
 
 ```sh
-npm install
+npm install -g sgdk-video-player
 ```
 
 ## Usage
 
 ```sh
-aaaaa
+sgdk-video-player convert <src> <resDir>
+
+Converts a video file and outputs the result in the resource directory
+
+Positionals:
+  src     The source video, the one that will be converted   [string] [required]
+  resDir  The resource directory, where the generated sources will be placed.
+                                                             [string] [required]
+
+Options:
+  --version                Show version number                         [boolean]
+  --imagemagick-dir, --kd  Directory where ImageMagick is located       [string]
+  --help                   Show help                                   [boolean]
+  --cpu-cores              Number of CPU cores to use. If ommited, will use all
+                           of them.
+  --alias                  Alias to use when generating the C constants. If
+                           ommited, it will be generated from <src>.    [string]
 ```
 
-## Run tests
-
-```sh
-npm run test
-```
 
 ## Author
 
