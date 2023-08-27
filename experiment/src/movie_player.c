@@ -14,10 +14,8 @@ void MVP_playMovie(const MovieData *movie) {
     SYS_disableInts();
 	
 	// workaround to tiles leaking into PLAN A
+	u16 originalBPlanAddress = VDP_getBPlanAddress();
 	VDP_setBPlanAddress(VDP_getAPlanAddress());
-
-    // set all palette to black
-    VDP_setPaletteColors(0, (u16*) palette_black, 64);
 
 	// Set up frame counter
 	SYS_setVIntCallback(MVP_VIntHandler);
@@ -80,4 +78,10 @@ void MVP_playMovie(const MovieData *movie) {
     SYS_disableInts();
 	SYS_setVIntCallback(NULL);
 	SYS_enableInts();
+	
+	// Restore BPlan
+	VDP_getBPlanAddress(originalBPlanAddress);
+	
+	// Stop sound.
+	SND_stopPlay_2ADPCM (SOUND_PCM_CH1);	
 }
