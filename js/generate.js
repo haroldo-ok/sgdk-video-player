@@ -15,7 +15,7 @@ const movieDataHeaderTemplate = (images, alias) => `
 #ifndef _HEADER_${alias}
 #define _HEADER_${alias}
 
-#include "movie_res.h"
+#include "movie_player.h"
 
 extern const MovieData ${alias};
 
@@ -24,7 +24,7 @@ extern const MovieData ${alias};
 `;
 
 const movieDataTemplate = (images, alias) => `
-#include "movie_res.h"
+#include "movie_player.h"
 #include "${alias}__frames.h"
 
 const MovieData ${alias} = {

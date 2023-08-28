@@ -16,7 +16,7 @@
 </p>
 
 > A video converter/video player for SGDK 
- 
+
 *(Work-In-Progress: the converter is done, but it is still missing a C library to make it easier to play on SGDK)*
 
 ### 🏠 [Homepage](https://github.com/haroldo-ok/sgdk-video-player#readme)
@@ -27,7 +27,7 @@
 npm install -g sgdk-video-player
 ```
 
-## Usage
+## Using the converter
 
 ```sh
 sgdk-video-player convert <src> <resDir>
@@ -49,6 +49,9 @@ Options:
                            ommited, it will be generated from <src>.    [string]
 ```
 
+## Using the video player
+
+The video player is on the `lib/` folder. You can copy it to your SGDK project.
 
 ## Author
 

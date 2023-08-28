@@ -12,4 +12,6 @@ typedef struct MovieData {
 	const Image *frames[];
 } MovieData;
 
+extern void MVP_playMovie(const MovieData *movie);
+
 #endif // _MOVIE_RES_H
