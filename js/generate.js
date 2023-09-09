@@ -3,13 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// TODO: Move to utility module
-const changeFileExtension = (file, extension) => {
-  const baseName = path.basename(file, path.extname(file))
-  return path.join(path.dirname(file), baseName + extension);
-};
-
-const removeFileExtension = file => changeFileExtension(file, '');
+const { changeFileExtension, removeFileExtension } = require('./file');
 
 const movieDataHeaderTemplate = (images, alias) => `
 #ifndef _HEADER_${alias}
