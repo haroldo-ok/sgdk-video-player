@@ -32,6 +32,11 @@ if (require.main === module) {
 					'alias': {
 						describe: 'Alias to use when generating the C constants. If ommited, it will be generated from <src>.',
 						type: 'string'
+					},
+					'only-if-changed': {
+						describe: 'Only converts if file has been changed.',
+						default: false,
+						type: 'boolean'
 					}
 				})
 				.check((argv, options) => {
