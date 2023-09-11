@@ -41,14 +41,26 @@ const movieResourceTemplate = (images, alias) => images
 	.map(s => `IMAGE ${alias}__${removeFileExtension(s)} "tmpmv_${alias}/${s}" FAST`)
 	.join('\n') + '\n' +
 	`WAV ${alias}__sound "tmpmv_${alias}/sound.wav" 2ADPCM` + '\n';
+	
+const listCodeToGenerate = (resDir, alias) => {
+	const createEntry = (name, sourceTemplate) => ({
+		fileName: path.join(resDir, name),
+		sourceTemplate
+	});
+
+	return [
+		createEntry(`${alias}.h`, movieDataHeaderTemplate),
+		createEntry(`${alias}.c`, movieDataTemplate),
+		createEntry(`${alias}__frames.res`, movieResourceTemplate)
+	];
+};
 
 
 const generateCode = async (images, resDir, alias) => {
-	return Promise.all([
-		fs.promises.writeFile(path.join(resDir, `${alias}.h`), movieDataHeaderTemplate(images, alias)),
-		fs.promises.writeFile(path.join(resDir, `${alias}.c`), movieDataTemplate(images, alias)),
-		fs.promises.writeFile(path.join(resDir, `${alias}__frames.res`), movieResourceTemplate(images, alias))
-	]);
+	const codeToGenerate = listCodeToGenerate(resDir, alias);
+	const codeGenerationPromises = codeToGenerate.map(({ fileName, sourceTemplate }) => 
+		fs.promises.writeFile(fileName, sourceTemplate(images, alias)));
+	return Promise.all(codeGenerationPromises);
 }
 
 module.exports = { generateCode };
