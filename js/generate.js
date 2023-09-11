@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { changeFileExtension, removeFileExtension } = require('./file');
+const { removeFileExtension } = require('./file');
 
 const movieDataHeaderTemplate = (images, alias) => `
 #ifndef _HEADER_${alias}
@@ -63,4 +63,4 @@ const generateCode = async (images, resDir, alias) => {
 	return Promise.all(codeGenerationPromises);
 }
 
-module.exports = { generateCode };
+module.exports = { generateCode, listCodeToGenerate };

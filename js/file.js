@@ -5,6 +5,22 @@ const checkFileExists = async fileName => fs.promises.access(fileName, fs.consta
    .then(() => true)
    .catch(() => false);
    
+const checkLastModified = async fileName => {
+	try {
+		// Use `stat()` fn to get last modified date
+		const stat = await fs.promises.stat(fileName);
+		return stat.mtime;
+	} catch (e) {
+		if (e.code === 'ENOENT') {
+			// The error specifically says the file is missing
+			return null;
+		}
+		
+		// Fallback for other errors.
+		return e;
+	}
+};
+   
 const changeFileExtension = (file, extension) => {
   const baseName = path.basename(file, path.extname(file))
   return path.join(path.dirname(file), baseName + extension);
@@ -29,4 +45,4 @@ const listFilesRegex = async (dir, fileRegex) => {
 	return sortedFileNames;
 };
 
-module.exports = { checkFileExists, changeFileExtension, removeFileExtension, clearDir, listFilesRegex };
+module.exports = { checkFileExists, checkLastModified, changeFileExtension, removeFileExtension, clearDir, listFilesRegex };
