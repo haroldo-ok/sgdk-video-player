@@ -3,13 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// TODO: Move to utility module
-const changeFileExtension = (file, extension) => {
-  const baseName = path.basename(file, path.extname(file))
-  return path.join(path.dirname(file), baseName + extension);
-};
-
-const removeFileExtension = file => changeFileExtension(file, '');
+const { removeFileExtension, changeFileExtension, listFilesRegex } = require('./file');
 
 const movieDataHeaderTemplate = (images, alias) => `
 #ifndef _HEADER_${alias}
@@ -47,14 +41,47 @@ const movieResourceTemplate = (images, alias) => images
 	.map(s => `IMAGE ${alias}__${removeFileExtension(s)} "tmpmv_${alias}/${s}" FAST`)
 	.join('\n') + '\n' +
 	`WAV ${alias}__sound "tmpmv_${alias}/sound.wav" 2ADPCM` + '\n';
+	
+	
+const getDestDir = (resDir, alias) => path.join(resDir, `tmpmv_${alias}`);
+
+const listSourceFrames = async (resDir, alias) => {
+	const destDir = getDestDir(resDir, alias);
+	return listFilesRegex(destDir, /^frame_(\d+)\.jpg$/);
+}
+
+const listImagesToConvert = async (resDir, alias) => {
+	const destDir = getDestDir(resDir, alias);
+	const sourceFrames = await listSourceFrames(resDir, alias);
+
+	return sourceFrames.map(frameSrc => {
+		const fullSrc = path.join(destDir, frameSrc);
+		const dest = changeFileExtension(fullSrc, '.png');
+		
+		return { src: fullSrc, dest };
+	});
+};
+
+	
+const listCodeToGenerate = (resDir, alias) => {
+	const createEntry = (name, sourceTemplate) => ({
+		fileName: path.join(resDir, name),
+		sourceTemplate
+	});
+
+	return [
+		createEntry(`${alias}.h`, movieDataHeaderTemplate),
+		createEntry(`${alias}.c`, movieDataTemplate),
+		createEntry(`${alias}__frames.res`, movieResourceTemplate)
+	];
+};
 
 
 const generateCode = async (images, resDir, alias) => {
-	return Promise.all([
-		fs.promises.writeFile(path.join(resDir, `${alias}.h`), movieDataHeaderTemplate(images, alias)),
-		fs.promises.writeFile(path.join(resDir, `${alias}.c`), movieDataTemplate(images, alias)),
-		fs.promises.writeFile(path.join(resDir, `${alias}__frames.res`), movieResourceTemplate(images, alias))
-	]);
+	const codeToGenerate = listCodeToGenerate(resDir, alias);
+	const codeGenerationPromises = codeToGenerate.map(({ fileName, sourceTemplate }) => 
+		fs.promises.writeFile(fileName, sourceTemplate(images, alias)));
+	return Promise.all(codeGenerationPromises);
 }
 
-module.exports = { generateCode };
+module.exports = { generateCode, listCodeToGenerate, getDestDir, listSourceFrames, listImagesToConvert };

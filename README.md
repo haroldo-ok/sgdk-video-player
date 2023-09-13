@@ -17,7 +17,6 @@
 
 > A video converter/video player for SGDK 
 
-*(Work-In-Progress: the converter is done, but it is still missing a C library to make it easier to play on SGDK)*
 
 ### 🏠 [Homepage](https://github.com/haroldo-ok/sgdk-video-player#readme)
 
@@ -32,8 +31,6 @@ npm install -g sgdk-video-player
 ```sh
 sgdk-video-player convert <src> <resDir>
 
-Converts a video file and outputs the result in the resource directory
-
 Positionals:
   src     The source video, the one that will be converted   [string] [required]
   resDir  The resource directory, where the generated sources will be placed.
@@ -47,6 +44,8 @@ Options:
                            of them.
   --alias                  Alias to use when generating the C constants. If
                            ommited, it will be generated from <src>.    [string]
+  --only-if-changed        Only converts if file has been changed.
+                                                      [boolean] [default: false]
 ```
 
 ## Using the video player

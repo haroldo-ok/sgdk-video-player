@@ -32,6 +32,11 @@ if (require.main === module) {
 					'alias': {
 						describe: 'Alias to use when generating the C constants. If ommited, it will be generated from <src>.',
 						type: 'string'
+					},
+					'only-if-changed': {
+						describe: 'Only converts if file has been changed.',
+						default: false,
+						type: 'boolean'
 					}
 				})
 				.check((argv, options) => {
@@ -63,7 +68,7 @@ if (require.main === module) {
 		.argv;		
 		
 	if (commandLine._.includes('convert')) {
-		const options = _.pick(commandLine, 'imagemagickDir', 'cpuCores', 'alias');
+		const options = _.pick(commandLine, 'imagemagickDir', 'cpuCores', 'alias', 'onlyIfChanged');
 		convertVideo(commandLine.src, commandLine.resDir, options);
 	}
 }
