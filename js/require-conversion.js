@@ -2,8 +2,13 @@
 
 const fs = require('fs');
 
-const { listCodeToGenerate } = require('./generate');
+const { listCodeToGenerate, listImagesToConvert } = require('./generate');
 const { checkLastModified } = require('./file');
+
+const isFileAbsentOrChanged = async (baseDate, fileName) => {
+	const genDate = await checkLastModified(fileName);
+	return !genDate || genDate < baseDate;
+}
 
 const isConversionRequired = async (srcVideo, resDir, alias) => {
 	const videoDate = await checkLastModified(srcVideo);
@@ -12,12 +17,22 @@ const isConversionRequired = async (srcVideo, resDir, alias) => {
 	}
 	
 	// Check generated source files
+	
 	for (const { fileName } of listCodeToGenerate(resDir, alias)) {
-		const genDate = await checkLastModified(fileName);
-		if (!genDate || genDate < videoDate) {
+		if (await isFileAbsentOrChanged(videoDate, fileName)) {
 			// Generated file is missing, or is older than the video
 			return true;
 		}
+	}
+	
+	// Check generated frames	
+	const imagesToConvert = await listImagesToConvert(resDir, alias);
+	if (!imagesToConvert.length) return true;
+	for (const { dest } of imagesToConvert) {
+		if (await isFileAbsentOrChanged(videoDate, dest)) {
+			// Generated file is missing, or is older than the video
+			return true;
+		}		
 	}
 	
 	return false;

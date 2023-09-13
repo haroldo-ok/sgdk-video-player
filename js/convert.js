@@ -20,7 +20,7 @@ const convertVideo = async (srcVideo, resDir, { imagemagickDir, cpuCores, alias 
 	}
 			
 	console.error('Skipping for testing purposes', { needsConversion: await isConversionRequired(srcVideo, resDir, alias) });
-	// return;
+	return;
 
 	await clearDir(destDir);
 		
