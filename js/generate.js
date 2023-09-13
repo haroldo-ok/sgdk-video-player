@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { removeFileExtension } = require('./file');
+const { removeFileExtension, changeFileExtension, listFilesRegex } = require('./file');
 
 const movieDataHeaderTemplate = (images, alias) => `
 #ifndef _HEADER_${alias}
@@ -42,7 +42,26 @@ const movieResourceTemplate = (images, alias) => images
 	.join('\n') + '\n' +
 	`WAV ${alias}__sound "tmpmv_${alias}/sound.wav" 2ADPCM` + '\n';
 	
+	
 const getDestDir = (resDir, alias) => path.join(resDir, `tmpmv_${alias}`);
+
+const listSourceFrames = async (resDir, alias) => {
+	const destDir = getDestDir(resDir, alias);
+	return listFilesRegex(destDir, /^frame_(\d+)\.jpg$/);
+}
+
+const listImagesToConvert = async (resDir, alias) => {
+	const destDir = getDestDir(resDir, alias);
+	const sourceFrames = await listSourceFrames(resDir, alias);
+
+	return sourceFrames.map(frameSrc => {
+		const fullSrc = path.join(destDir, frameSrc);
+		const dest = changeFileExtension(fullSrc, '.png');
+		
+		return { src: fullSrc, dest };
+	});
+};
+
 	
 const listCodeToGenerate = (resDir, alias) => {
 	const createEntry = (name, sourceTemplate) => ({
@@ -65,4 +84,4 @@ const generateCode = async (images, resDir, alias) => {
 	return Promise.all(codeGenerationPromises);
 }
 
-module.exports = { generateCode, listCodeToGenerate, getDestDir };
+module.exports = { generateCode, listCodeToGenerate, getDestDir, listSourceFrames, listImagesToConvert };
