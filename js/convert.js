@@ -8,7 +8,7 @@ const { generateCode, getDestDir, listSourceFrames, listImagesToConvert } = requ
 const { checkFileExists, changeFileExtension, clearDir, listFilesRegex } = require('./file');
 const { isConversionRequired } = require('./require-conversion');
 
-const convertVideo = async (srcVideo, resDir, { imagemagickDir, cpuCores, alias }) => {
+const convertVideo = async (srcVideo, resDir, { imagemagickDir, cpuCores, alias, onlyIfChanged }) => {
 
 	if (!await checkFileExists(srcVideo)) {
 		throw new Error(`Input video not found: ${srcVideo}`);
@@ -18,10 +18,12 @@ const convertVideo = async (srcVideo, resDir, { imagemagickDir, cpuCores, alias 
 	if (!await checkFileExists(destDir)) {
 		await fs.promises.mkdir(destDir, { recursive: true });
 	}
-			
-	console.error('Skipping for testing purposes', { needsConversion: await isConversionRequired(srcVideo, resDir, alias) });
-	return;
-
+	
+	if (onlyIfChanged && !await isConversionRequired(srcVideo, resDir, alias)) {
+		console.log(`Video already converted: ${srcVideo}`);
+		return;
+	}
+	
 	await clearDir(destDir);
 		
 	await extractVideoFrames(srcVideo, destDir, { imagemagickDir });

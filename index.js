@@ -68,7 +68,7 @@ if (require.main === module) {
 		.argv;		
 		
 	if (commandLine._.includes('convert')) {
-		const options = _.pick(commandLine, 'imagemagickDir', 'cpuCores', 'alias');
+		const options = _.pick(commandLine, 'imagemagickDir', 'cpuCores', 'alias', 'onlyIfChanged');
 		convertVideo(commandLine.src, commandLine.resDir, options);
 	}
 }
