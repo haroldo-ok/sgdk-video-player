@@ -42,6 +42,8 @@ const movieResourceTemplate = (images, alias) => images
 	.join('\n') + '\n' +
 	`WAV ${alias}__sound "tmpmv_${alias}/sound.wav" 2ADPCM` + '\n';
 	
+const getDestDir = (resDir, alias) => path.join(resDir, `tmpmv_${alias}`);
+	
 const listCodeToGenerate = (resDir, alias) => {
 	const createEntry = (name, sourceTemplate) => ({
 		fileName: path.join(resDir, name),
@@ -63,4 +65,4 @@ const generateCode = async (images, resDir, alias) => {
 	return Promise.all(codeGenerationPromises);
 }
 
-module.exports = { generateCode, listCodeToGenerate };
+module.exports = { generateCode, listCodeToGenerate, getDestDir };

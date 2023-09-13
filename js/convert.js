@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { spawnWorkers, extractVideoFrames, reduceTileCount, convertImagesToIndexed } = require('./execute');
-const { generateCode } = require('./generate');
+const { generateCode, getDestDir } = require('./generate');
 const { checkFileExists, changeFileExtension, clearDir, listFilesRegex } = require('./file');
 const { isConversionRequired } = require('./require-conversion');
 
@@ -14,13 +14,13 @@ const convertVideo = async (srcVideo, resDir, { imagemagickDir, cpuCores, alias 
 		throw new Error(`Input video not found: ${srcVideo}`);
 	}
 
-	const destDir = path.join(resDir, `tmpmv_${alias}`);
+	const destDir = getDestDir(resDir, alias);
 	if (!await checkFileExists(destDir)) {
 		await fs.promises.mkdir(destDir, { recursive: true });
 	}
 			
 	console.error('Skipping for testing purposes', { needsConversion: await isConversionRequired(srcVideo, resDir, alias) });
-	return;
+	// return;
 
 	await clearDir(destDir);
 		
